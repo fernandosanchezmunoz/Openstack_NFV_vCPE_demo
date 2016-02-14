@@ -1,0 +1,122 @@
+# This is a text description of the steps that need to be taken to add a virtual CPE service using the PLUMgrid console
+# on top of the NFV environment created with the scripts in this project.
+# It describes the steps required to create the service including a NAT pool and adding the connectors to the physical device
+# and in between the NFV and vCPE environments. It also describes how to add the physical device and remotely configure a home
+# networking service on it.
+
+- Log into PLUMgrid GUI. Default username/password is typically "plumgrid"/"plumgrid"
+
+*** Zone Config --
+- Add CPE-nat-metro-pool ; start 172.16.254.50, end 172.16.254.254
+
+- Configure OSPF in routers
+*
+-- Select the router "zPG_dynamic_NFV-rtr-in"
+router_ID: 172.16.2.254
+networks:
+172.16.2.0
+255.255.255.0
+0.0.0.0
+redistribute connected
+*
+-- Select the router "zPG_dynamic_NFV-rtr-out"
+router_ID: 172.16.1.1
+networks:
+172.16.1.0
+255.255.255.0
+0.0.0.0
+redistribute connected and static
+
+- Right-click on the canvas and select [ Deploy ] to make the changes active
+
+--> Show that OSPF is working across "SDN" and "Cloud" VNF
+   * check the routing Database of the dynamic router purple icons and watch how routes are propagated
+   * open up the vRouter appliance in openstack, login with "vyos"/"vyos" and run "show ip ospf neighbor"
+
+** Zone config
+
+- Add "vCPE-253" Virtual Domain:
+-- Connector,
+--- Mark External connectivity
+--- Add instance
+    * Port, "Home-WLAN", label pg-cpe+wlan0
+    * Wire, "vCPE-253_to_NFV", (target "NFV")
+
+-- NAT,
+--- CPE-253-NAT
+    * select from CPE-NAT-metro-pool, manually select 172.16.254.253
+
+** Virtual Domain View
+- Add topology "vCPE-HOMENET"
+-- Add connector "Home-WLAN"
+-- Add bridge "Home-NET"
+-- Add router "Home-Router"
+--- connect the router with the bridge
+--- add IP address 192.168.1.1
+-- Add NAT "CPE-253-NAT"
+--- connect the NAT with the router:
+---- zone "inside":
+---- IP address **** 172.16.254.50
+[Deploy]
+
+-- Add DNS
+--- connect DNS to bridge "Home-NET":
+---- IP address: 192.168.1.2
+---- GW address: 192.168.1.1
+----- Edit the DNS:
+------ Forwarders: 8.8.8.8
+------ Max cache size: 1024
+------ Zone Attributes:
+------- Domain name: "vcpe.local"
+------- TTL: 38400
+------- email address: "admin.vcpe.local"
+------- nameserver: "dns.vcpe.local"
+[Deploy]
+
+-- Add DHCP:
+--- connect DHCP to bridge "Home-DHCP"
+---- IP address: 192.168.1.3
+---- IP Pool start: 192.168.1.50
+---- IP Pool end: 192.168.1.60
+---- configure DHCP options by clicking on the interface (DOT/circle) between the DHCP server and the bridge:
+----- router: 192.168.1.1
+----- dns-server: 192.168.1.2
+[Deploy]
+
+-- Add Connector "vCPE-253_to-NFV"
+--- connect Connector to "NAT"
+---- zone "outside"
+[Deploy]
+
+*** Go back to "NFV" Virtual Domain
+*** Drag and drop a connector from the top bar:
+   - select Connector "vCPE253_to_NFV"
+   - connect Connector to "METRO_net" bridge
+[Deploy]
+
+--> Show that the solution is working
+  * Go to "Virtual Domain View", click on "vCPE-253" topology, right-click on the "home-NET" bridge and select "Dynamic Mac stats". Right-click again and select "Host Table stats"
+    - These windows will show the new terminals as they connect
+
+--> Connect a terminal to the physical WiFi Access Point
+  * SSID = "00PLUMGRID"
+  * Security WEP
+  * Password = 1357924680
+
+  --> Watch how the new terminal is connected to the internet through the wifi
+  --> Watch how the traffic of the new terminal is flowing through the virtual router VNF in the cloud
+      - Log into the vRouter VNF again in Openstack
+      - run the command "tshark -i eth0"
+         - CTRL-C when done
+
+--> Add a static DNS entry for "Captive Portal"
+* Go to "Virtual Domain View", click on "vCPE-253" topology, right-click on the DNS and "Edit":
+------ Static Records, Add:
+------- Hostname "home"
+------- Data: 172.16.2.100
+        (this should be the ip address of the webserver VNF in openstack, it's been set by the installation script)
+        (to double check it: log into openstack, open the console of the webserver, log in with "root"/"root123" and run "ifconfig eth1")
+
+
+--> Use the connected terminal to open "http://home.vcpe.local" and watch the captive portal
+
