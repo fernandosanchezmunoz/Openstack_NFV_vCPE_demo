@@ -1,0 +1,53 @@
+# This file includes notes on preliminary work that may need to be performed on an Openstack cloud
+# to be able to run this demo. This assumes a working Openstack installation with the PLUMgrid plugin and
+# solution installed and working properly
+
+** 1.- Set up Appliance flag on PLUMgrid
+### file: etc/neutron/plugins/plumgrid/plumlib.ini
+[PLUMgridLibrary]
+# PLUMlib writes to CDB to save some data. If this flag is set to
+# false, PLUMlib will not use CDB utility
+cdb_configuration = True
+# Name of the interface plugged on fabric network
+fabric_eth = eth1
+# Security Policy Flag
+enable_pg_security = True
+# Flag to enable/disable virtual appliance creation
+vapp_flag = True
+
+[keystone_authtoken]
+auth_uri=http://20.0.0.2:35357/v2.0
+admin_password=changeme
+admin_user=admin
+admin_tenant_name=admin
+
+[PLUMgridMetadata]
+nova_metadata_ip=169.254.169.254
+metadata_proxy_shared_secret=changeme
+metadata_mode=local
+enable_pg_metadata=True
+nova_metadata_port=8775
+
+### EOF
+# Save and exit.
+# Restart the Neutron service with "sudo service neutron-server restart"
+
+** 2.- If Kilo or older plugin version, add the extraroute extension to the neutron plugin
+### file: /usr/lib/python2.7/site-packages/neutron/plugins/plumgrid/plumgrid_plugin/plumgrid_plugin.py
+## Add "extraroute" on line 21:
+
+supported_extension_aliases = ["binding", "external-net", "extraroute",
+                                   "provider", "quotas", "router",
+                                   "security-group"] + vndr_exts
+
+## EOF
+
+** 3.- Configure the "nfvrc" file with the values according to the installation:
+** Edit the nfvrc file and modify the values in the first paragraph under "PARAMETERS TO BE ADJUSTED FOR NEW INSTALLATIONS"
+
+** 4.- Make sure that the Openstack credencitals in the nfvrc file are valid and the same as the "openrc" file downloaded from Openstack.
+** check with ". ./nfvrc; glance image-list
+**** depending on the install, it may be required to change the Openstack credentials section too. Particularly, the URL type
+**** from "publicURL" to "internalURL"
+
+** 4.- Always keep all files in this package in the same subdirectory, including the VNF image files
