@@ -1,0 +1,103 @@
+#!/bin/sh
+
+#Resource file including all configuration variables required for the Openstack NFV vCPE demo.
+#Most installations should only need changing the first section to adapt to external connectivity and
+#Controller IP location.
+#This assumes that the authentication Endpoint types is 'publicURL'.
+#For installations where it is 'internalURL' the Openstack section may need to be copied from "openrc"
+
+############################################################################
+############ PARAMETERS TO BE ADJUSTED FOR NEW INSTALLATIONS ###############
+############################################################################
+
+export ADMIN_NAME='admin'
+export ADMIN_PASSWORD='changeme' 			#Orangebox=???
+export CONTROLLER_IP=20.0.0.2 				#Orangebox=???
+export PHYSICAL_PORT='gateway+enp2s0f1'		#Orangebox='node00vm1ob44+eth1'
+export EXTERNAL_NET_CIDR=192.168.99.0/24 	#Orangebox=172.27.46.0/23
+export EXTERNAL_NET_GW=192.168.99.254 		#Orangebox=172.27.47.254
+export EXTERNAL_NET_DNS=192.168.99.254 		#Orangebox=172.27.47.254
+export FLOATINGIP_START=192.168.99.220		#Orangebox=172.27.46.50
+export FLOATINGIP_END=192.168.99.240		#Orangebox=172.27.46.253
+
+############################################################################
+############################################################################
+############################################################################
+
+#WAN net
+export WAN_net_name='WAN_net'
+export WAN_net_physical_port=$PHYSICAL_PORT
+export WAN_subnet_name='WAN_net'
+export WAN_subnet_cidr=$EXTERNAL_NET_CIDR
+export WAN_subnet_gw=$EXTERNAL_NET_GW
+export WAN_subnet_dns=$EXTERNAL_NET_DNS
+export WAN_subnet_dhcp_start=$FLOATINGIP_START
+export WAN_subnet_dhcp_end=$FLOATINGIP_END
+
+
+#openstack credentials
+export OS_NO_CACHE='true'
+export OS_TENANT_NAME=$ADMIN_NAME
+export OS_USERNAME=$ADMIN_NAME
+export OS_PASSWORD=$ADMIN_PASSWORD
+export OS_AUTH_URL='http://'$CONTROLLER_IP':5000/v2.0/'
+export OS_AUTH_STRATEGY='keystone'
+export OS_REGION_NAME='openstack'
+export CINDER_ENDPOINT_TYPE='publicURL'
+export GLANCE_ENDPOINT_TYPE='publicURL'
+export KEYSTONE_ENDPOINT_TYPE='publicURL'
+export NOVA_ENDPOINT_TYPE='publicURL'
+export NEUTRON_ENDPOINT_TYPE='publicURL'
+
+#NFV tenant
+export NFV_tenant_name='NFV'
+
+#NFV net_out _ from WAN to NFV
+export NFV_net_out_name='NFV_net_out'
+export NFV_subnet_out_name='NFV_subnet_out'
+export NFV_subnet_out_cidr=172.16.1.0/24
+export NFV_subnet_out_gw=172.16.1.1
+export NFV_subnet_out_dhcp_range_start=172.16.1.50
+export NFV_subnet_out_dhcp_range_end=172.16.1.253
+
+#rtr_out _ from WAN to NFV
+export rtr_out_name='zPG_dynamic_rtr_out'
+
+#export rtr_out_ip_WAN=dhcp
+export rtr_out_ip_NFV=$NFV_subnet_out_1_gw
+
+#NFV net_in _ from NFV to METRO
+export NFV_net_in_name='NFV_net_in'
+export NFV_subnet_in_name='NFV_subnet_in'
+export NFV_subnet_in_cidr=172.16.2.0/24
+export NFV_subnet_in_gw=172.16.2.254
+export NFV_subnet_in_dhcp_range_start=172.16.2.50
+export NFV_subnet_in_dhcp_range_end=172.16.2.253
+
+#METRO subnet _ from METRO to CPE
+export METRO_net_name='METRO_net'
+export METRO_subnet_name='METRO_subnet'
+export METRO_subnet_cidr=172.16.254.0/24
+export METRO_subnet_gw=172.16.254.1
+
+#router_in _ from NFV to METRO
+export rtr_in_name='zPG_dynamic_rtr_in'
+export rtr_in_ip_nfv=172.16.2.254
+export rtr_in_ip_metro=$METRO_subnet_254_gw
+
+#vRouter appliance
+export VNF_flavor='m1.small'
+export VNF_1_name='pg-nfv_vRouter'
+export VNF_1_image='vRouter'
+export VNF_1_file='./VYOS-NFV_demo.qcow2'
+export VNF_1_ip_1=172.16.1.254
+export VNF_1_ip_2=172.16.2.2
+
+#WebServer appliance
+export VNF_2_name='pg-nfv_webServer'
+export VNF_2_image='webServer'
+export VNF_2_file='./webServer-NFV_demo.qcow2'
+export VNF_2_ip_1=172.16.1.100
+export VNF_2_ip_2=172.16.2.100
+
+export member_role_name='_member_'
