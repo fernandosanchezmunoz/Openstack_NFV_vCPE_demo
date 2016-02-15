@@ -90,6 +90,7 @@ export VNF_flavor='m1.small'
 export VNF_1_name='pg-nfv_vRouter'
 export VNF_1_image='vRouter'
 export VNF_1_file='./VYOS-NFV_demo.qcow2'
+export VNF_1_location='https://www.dropbox.com/s/zuz0y7jse4t7iec/VYOS-NFV_demo.qcow2?dl=0'
 export VNF_1_ip_1=172.16.1.254
 export VNF_1_ip_2=172.16.2.2
 
@@ -97,6 +98,7 @@ export VNF_1_ip_2=172.16.2.2
 export VNF_2_name='pg-nfv_webServer'
 export VNF_2_image='webServer'
 export VNF_2_file='./webServer-NFV_demo.qcow2'
+export VNF_2_location='https://www.dropbox.com/s/0dp7gyvmd0awmlb/webServer-NFV_demo.qcow2?dl=0'
 export VNF_2_ip_1=172.16.1.100
 export VNF_2_ip_2=172.16.2.100
 

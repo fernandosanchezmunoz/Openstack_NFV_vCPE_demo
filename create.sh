@@ -13,7 +13,7 @@ if [ "$VNF_1_image" = $(glance image-list|grep $VNF_1_image|awk -F '|' '{print $
 	echo "VNF1 Image exists..."
 else
 	echo "Creating VNF1 Image..."
-	glance image-create --name $VNF_1_image --is-public True --disk-format qcow2 --container-format bare --progress --file $VNF_1_file
+	glance image-create --name $VNF_1_image --is-public True --disk-format qcow2 --container-format bare --progress --location $VNF_1_location
 fi
 
 if [ "$VNF_2_image" = $(glance image-list|grep $VNF_2_image|awk -F '|' '{print $3}'| tr -d ' ') ]
@@ -21,7 +21,7 @@ if [ "$VNF_2_image" = $(glance image-list|grep $VNF_2_image|awk -F '|' '{print $
 	echo "VNF2 Image exists..."
 else
 	echo "Creating VNF2 Image..."
-	glance image-create --name $VNF_2_image --is-public True --disk-format qcow2 --container-format bare --progress --file $VNF_2_file
+	glance image-create --name $VNF_2_image --is-public True --disk-format qcow2 --container-format bare --progress --location $VNF_2_location
 fi
 
 #Create WAN-net as Admin
