@@ -19,6 +19,7 @@ export EXTERNAL_NET_GW=192.168.99.254 		#Orangebox=172.27.47.254
 export EXTERNAL_NET_DNS=192.168.99.254 		#Orangebox=172.27.47.254
 export FLOATINGIP_START=192.168.99.220		#Orangebox=172.27.46.50
 export FLOATINGIP_END=192.168.99.240		#Orangebox=172.27.46.253
+export ENDPOINT_TYPE='publicURL'			#could be 'internalURL' depending on openstack deployemnt
 
 ############################################################################
 ############################################################################
@@ -43,11 +44,11 @@ export OS_PASSWORD=$ADMIN_PASSWORD
 export OS_AUTH_URL='http://'$CONTROLLER_IP':5000/v2.0/'
 export OS_AUTH_STRATEGY='keystone'
 export OS_REGION_NAME='openstack'
-export CINDER_ENDPOINT_TYPE='publicURL'
-export GLANCE_ENDPOINT_TYPE='publicURL'
-export KEYSTONE_ENDPOINT_TYPE='publicURL'
-export NOVA_ENDPOINT_TYPE='publicURL'
-export NEUTRON_ENDPOINT_TYPE='publicURL'
+export CINDER_ENDPOINT_TYPE=$ENDPOINT_TYPE
+export GLANCE_ENDPOINT_TYPE=$ENDPOINT_TYPE
+export KEYSTONE_ENDPOINT_TYPE=$ENDPOINT_TYPE
+export NOVA_ENDPOINT_TYPE=$ENDPOINT_TYPE
+export NEUTRON_ENDPOINT_TYPE=$ENDPOINT_TYPE
 
 #NFV tenant
 export NFV_tenant_name='NFV'
