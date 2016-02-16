@@ -1,5 +1,5 @@
 #!/bin/sh
-#Author: Fernando Sanchez (fernandosanchezmunoz@gmail.com)
+#Author: Fernando Sanchez (fernando at plumgrid dot com)
 #(c)2016 Fernando Sanchez and PLUMgrid inc.
 #Resource file including all configuration variables required for the Openstack NFV vCPE demo.
 #Most installations should only need changing the first section to adapt to external connectivity and
