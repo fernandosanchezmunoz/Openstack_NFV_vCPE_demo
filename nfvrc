@@ -14,7 +14,7 @@
 export ADMIN_NAME='admin'
 export ADMIN_PASSWORD='changeme' 		#Orangebox=???
 export CONTROLLER_IP=20.0.0.2 			#Orangebox=???
-export PHYSICAL_PORT='stove+enp12s0f2'		#Orangebox='node00vm1ob44+eth1'
+export PHYSICAL_PORT='stove+enp1s0f2'		#Orangebox='node00vm1ob44+eth1'
 export EXTERNAL_NET_TYPE='flat'			#could be flat
 export EXTERNAL_NET_VLAN_ID=0			#VLAN_ID
 export EXTERNAL_NET_CIDR=192.168.99.0/24 	#Orangebox=172.27.46.0/23
