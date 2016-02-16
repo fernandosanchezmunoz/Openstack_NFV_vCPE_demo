@@ -1,4 +1,6 @@
 #!/bin/bash
+#Author: Fernando Sanchez (fernandosanchezmunoz@gmail.com)
+#(c)2016 Fernando Sanchez and PLUMgrid inc.
 #Script to destroy a full NFV environment in Openstack. This includes external connectivity, a purpose-built tenant,
 #and a two stage routed environment with a Network_WAN-Router-Network_out-[NFV]-Network_in-Router-Network_METRO topology.
 #Check Network diagram for details.

@@ -1,5 +1,6 @@
 #!/bin/sh
-
+#Author: Fernando Sanchez (fernandosanchezmunoz@gmail.com)
+#(c)2016 Fernando Sanchez and PLUMgrid inc.
 #Resource file including all configuration variables required for the Openstack NFV vCPE demo.
 #Most installations should only need changing the first section to adapt to external connectivity and
 #Controller IP location.
@@ -125,3 +126,8 @@ export VNF_1_port_2_id=d0129436-a8de-4627-a798-8e62848eccae
 export VNF_2_port_1_id=0ce37d2e-9d90-4f73-ba15-2d69b2dc39de
 export VNF_2_port_2_id=94307640-9311-4e5f-a470-9681f405df79
 export default_secgroup_id=fe717c58-3d69-422f-a1b5-f140b97bbb80
+export VNF_1_port_1_id=90170811-c72e-4858-90eb-8b294a570085
+export VNF_1_port_2_id=35d781ed-60c1-445f-80ce-bf5147e8fdd1
+export VNF_2_port_1_id=b24df3d3-7130-44df-bed2-cc6e0856174a
+export VNF_2_port_2_id=fa18ae65-2c8f-455c-aca2-73f8b93e6dff
+export default_secgroup_id=94be8fee-97c3-46a3-bf60-307e0f0e425b
