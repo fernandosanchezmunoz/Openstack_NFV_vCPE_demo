@@ -12,18 +12,18 @@
 ############################################################################
 
 export ADMIN_NAME='admin'
-export ADMIN_PASSWORD='6128gridPLUM!' 		#Orangebox=???
+export ADMIN_PASSWORD='changeme' 		#Orangebox=???
 export CONTROLLER_IP=20.0.0.2 			#Orangebox=???
-export PHYSICAL_PORT='node-6+eth0'		#Orangebox='node00vm1ob44+eth1'
-export EXTERNAL_NET_TYPE='vlan'			#could be flat
-export EXTERNAL_NET_VLAN_ID=2			#VLAN_ID
-export EXTERNAL_NET_CIDR=207.244.78.192/26 	#Orangebox=172.27.46.0/23
-export EXTERNAL_NET_GW=207.244.78.254 		#Orangebox=172.27.47.254
-export EXTERNAL_NET_DNS=207.244.78.254		#Orangebox=172.27.47.254
-export FLOATINGIP_START=207.244.78.231		#Orangebox=172.27.46.50
-export FLOATINGIP_END=207.244.78.240		#Orangebox=172.27.46.253
-export ENDPOINT_TYPE='internalURL'		#could be 'internalURL' depending on openstack deployemnt
-export REGION_NAME='RegionOne'			#typical values are 'Openstack' or 'RegionOne'
+export PHYSICAL_PORT='stove+enp12s0f2'		#Orangebox='node00vm1ob44+eth1'
+export EXTERNAL_NET_TYPE='flat'			#could be flat
+export EXTERNAL_NET_VLAN_ID=0			#VLAN_ID
+export EXTERNAL_NET_CIDR=192.168.99.0/24 	#Orangebox=172.27.46.0/23
+export EXTERNAL_NET_GW=192.168.99.254 		#Orangebox=172.27.47.254
+export EXTERNAL_NET_DNS=192.168.99.254		#Orangebox=172.27.47.254
+export FLOATINGIP_START=192.168.99.231		#Orangebox=172.27.46.50
+export FLOATINGIP_END=192.168.99.240		#Orangebox=172.27.46.253
+export ENDPOINT_TYPE='internalURL'		#'publicURL' or 'internalURL' depending on openstack deployemnt
+export REGION_NAME='openstack'			#typical values are 'Openstack' or 'RegionOne'
 
 ############################################################################
 ############################################################################
