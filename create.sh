@@ -9,24 +9,42 @@ export ENVIRONMENT_PATH="./nfvrc"
 
 #Check for VNF images existing in Glance, create otherwise
 if [ "$VNF_1_image" = $(glance image-list|grep $VNF_1_image|awk -F '|' '{print $3}'| tr -d ' ') ]
-	then
+then
 	echo "VNF1 Image exists..."
 else
 	echo "Creating VNF1 Image..."
-	glance image-create --name $VNF_1_image --is-public True --disk-format qcow2 --container-format bare --progress --location $VNF_1_location
+	if [ ! -f $VNF_1_file ]; then
+		wget -O ./$VNF_1_file $VNF_1_location
+        fi 	
+	glance image-create --name $VNF_1_image --is-public True --disk-format qcow2 --container-format bare --progress --file $VNF_1_file
 fi
 
 if [ "$VNF_2_image" = $(glance image-list|grep $VNF_2_image|awk -F '|' '{print $3}'| tr -d ' ') ]
-	then
+then
 	echo "VNF2 Image exists..."
 else
 	echo "Creating VNF2 Image..."
-	glance image-create --name $VNF_2_image --is-public True --disk-format qcow2 --container-format bare --progress --location $VNF_2_location
+	if [ ! -f $VNF_2_file ]; then
+		wget -O ./$VNF_2_file $VNF_2_location
+        fi 	
+	glance image-create --name $VNF_2_image --is-public True --disk-format qcow2 --container-format bare --progress --file $VNF_2_file
 fi
 
-#Create WAN-net as Admin
+#Create WAN-net
 echo "Creating WAN network..."
-neutron net-create --router:external --provider:network_type flat --provider:physical_network=$WAN_net_physical_port $WAN_net_name
+#Check whether we're on a flat or vlan network and create accordingly
+if [ "$WAN_net_type" = "vlan" ]
+then
+	neutron net-create --router:external=True --provider:physical_network=$WAN_net_physical_port \
+		--provider:network_type="vlan" --provider:segmentation_id=$WAN_net_vlan_id \
+		$WAN_net_name
+	echo "WAN net created as VLAN "$WAN_net_vlan_id" on port "$WAN_net_physical_port
+else
+        neutron net-create --router:external=True --provider:physical_network=$WAN_net_physical_port \
+                --provider:network_type="flat" \
+                $WAN_net_name
+        echo "WAN net created as flat on port "$WAN_net_physical_port
+fi
 sleep 1
 #CREATE WAN-subnet
 echo "Creating WAN subnet..."
@@ -48,7 +66,7 @@ keystone user-create --name $NFV_tenant_name --tenant $NFV_tenant_name --pass $N
 #automatically the user is member of the NFV project, so this is redundant
 #openstack role add --user $NFV_tenant_name --project $NFV_tenant_id $member_role_name
 #assign "admin" user to project
-openstack role add --user admin --project $NFV_tenant_id $member_role_name
+keystone user-role-add --user admin --tenant $NFV_tenant_id --role $member_role_name
 sleep 1
 
 #CREATE NFV-net-out

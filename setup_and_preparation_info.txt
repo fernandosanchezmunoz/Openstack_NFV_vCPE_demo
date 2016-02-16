@@ -2,6 +2,9 @@
 # to be able to run this demo. This assumes a working Openstack installation with the PLUMgrid plugin and
 # solution installed and working properly
 
+# requirements and dependencies
+# apt-get install wget
+
 ** 1.- Set up Appliance flag on PLUMgrid
 ### file: etc/neutron/plugins/plumgrid/plumlib.ini
 [PLUMgridLibrary]

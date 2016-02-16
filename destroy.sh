@@ -19,17 +19,28 @@ sleep 1
 neutron router-delete $rtr_in_name
 sleep 1
 
+#Authenticate as the NFV tenant to handle VNFs
+export OS_TENANT_NAME=$NFV_tenant_name 
+export OS_USERNAME=$NFV_tenant_name 
+export OS_PASSWORD=$NFV_tenant_name 
+
 #Delete VNF#1
 nova delete $VNF_1_name
-sleep 10
-#Delete the VNF's ports
+sleep 5
+#Delete VNF#2
+nova delete $VNF_2_name
+sleep 5
+
+#Authenticate as Admin
+export OS_TENANT_NAME=$ADMIN_NAME
+export OS_USERNAME=$ADMIN_NAME
+export OS_PASSWORD=$ADMIN_PASSWORD
+
+#Delete VNF1s ports
 neutron port-delete $VNF_1_port_1_id
 neutron port-delete $VNF_1_port_2_id
 
-#Delete VNF#2
-nova delete $VNF_2_name
-sleep 10
-#Delete the VNF's ports
+#Delete VNF2s ports
 neutron port-delete $VNF_2_port_1_id
 neutron port-delete $VNF_2_port_2_id
 
@@ -53,11 +64,6 @@ sleep 1
 #Delete net_out and subnet_out
 neutron subnet-delete $NFV_subnet_out_name
 neutron net-delete $NFV_net_out_name
-
-#Authenticate as Admin to remove NFV tenant and external connectivity
-export OS_TENANT_NAME=$ADMIN_NAME
-export OS_USERNAME=$ADMIN_NAME
-export OS_PASSWORD=$ADMIN_PASSWORD
 
 #Delete NFV tenant
 keystone user-delete $NFV_tenant_name

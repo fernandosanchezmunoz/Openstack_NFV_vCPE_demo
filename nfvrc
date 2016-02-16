@@ -11,22 +11,44 @@
 ############################################################################
 
 export ADMIN_NAME='admin'
-export ADMIN_PASSWORD='changeme' 			#Orangebox=???
-export CONTROLLER_IP=20.0.0.2 				#Orangebox=???
-export PHYSICAL_PORT='gateway+enp2s0f1'		#Orangebox='node00vm1ob44+eth1'
-export EXTERNAL_NET_CIDR=192.168.99.0/24 	#Orangebox=172.27.46.0/23
-export EXTERNAL_NET_GW=192.168.99.254 		#Orangebox=172.27.47.254
-export EXTERNAL_NET_DNS=192.168.99.254 		#Orangebox=172.27.47.254
-export FLOATINGIP_START=192.168.99.220		#Orangebox=172.27.46.50
-export FLOATINGIP_END=192.168.99.240		#Orangebox=172.27.46.253
-export ENDPOINT_TYPE='publicURL'			#could be 'internalURL' depending on openstack deployemnt
+export ADMIN_PASSWORD='6128gridPLUM!' 		#Orangebox=???
+export CONTROLLER_IP=20.0.0.2 			#Orangebox=???
+export PHYSICAL_PORT='node-6+eth0'		#Orangebox='node00vm1ob44+eth1'
+export EXTERNAL_NET_TYPE='vlan'			#could be flat
+export EXTERNAL_NET_VLAN_ID=2			#VLAN_ID
+export EXTERNAL_NET_CIDR=207.244.78.192/26 	#Orangebox=172.27.46.0/23
+export EXTERNAL_NET_GW=207.244.78.254 		#Orangebox=172.27.47.254
+export EXTERNAL_NET_DNS=207.244.78.254		#Orangebox=172.27.47.254
+export FLOATINGIP_START=207.244.78.231		#Orangebox=172.27.46.50
+export FLOATINGIP_END=207.244.78.240		#Orangebox=172.27.46.253
+export ENDPOINT_TYPE='internalURL'		#could be 'internalURL' depending on openstack deployemnt
+export REGION_NAME='RegionOne'			#typical values are 'Openstack' or 'RegionOne'
 
 ############################################################################
 ############################################################################
 ############################################################################
+
+#vRouter appliance
+export VNF_flavor='m1.small'
+export VNF_1_name='pg-nfv_vRouter'
+export VNF_1_image='vRouter'
+export VNF_1_file='./VYOS-NFV_demo.qcow2?dl=0'
+export VNF_1_location='https://www.dropbox.com/s/zuz0y7jse4t7iec/VYOS-NFV_demo.qcow2?dl=0'
+export VNF_1_ip_1=172.16.1.254
+export VNF_1_ip_2=172.16.2.2
+
+#WebServer appliance
+export VNF_2_name='pg-nfv_webServer'
+export VNF_2_image='webServer'
+export VNF_2_file='./webServer-NFV_demo.qcow2?dl=0'
+export VNF_2_location='https://www.dropbox.com/s/0dp7gyvmd0awmlb/webServer-NFV_demo.qcow2?dl=0'
+export VNF_2_ip_1=172.16.1.100
+export VNF_2_ip_2=172.16.2.100
 
 #WAN net
 export WAN_net_name='WAN_net'
+export WAN_net_type=$EXTERNAL_NET_TYPE
+export WAN_net_vlan_id=$EXTERNAL_NET_VLAN_ID
 export WAN_net_physical_port=$PHYSICAL_PORT
 export WAN_subnet_name='WAN_net'
 export WAN_subnet_cidr=$EXTERNAL_NET_CIDR
@@ -39,11 +61,12 @@ export WAN_subnet_dhcp_end=$FLOATINGIP_END
 #openstack credentials
 export OS_NO_CACHE='true'
 export OS_TENANT_NAME=$ADMIN_NAME
+export OS_PROJECT_NAME=$ADMIN_NAME
 export OS_USERNAME=$ADMIN_NAME
 export OS_PASSWORD=$ADMIN_PASSWORD
 export OS_AUTH_URL='http://'$CONTROLLER_IP':5000/v2.0/'
 export OS_AUTH_STRATEGY='keystone'
-export OS_REGION_NAME='openstack'
+export OS_REGION_NAME=$REGION_NAME
 export CINDER_ENDPOINT_TYPE=$ENDPOINT_TYPE
 export GLANCE_ENDPOINT_TYPE=$ENDPOINT_TYPE
 export KEYSTONE_ENDPOINT_TYPE=$ENDPOINT_TYPE
@@ -86,21 +109,19 @@ export rtr_in_name='zPG_dynamic_rtr_in'
 export rtr_in_ip_nfv=172.16.2.254
 export rtr_in_ip_metro=$METRO_subnet_254_gw
 
-#vRouter appliance
-export VNF_flavor='m1.small'
-export VNF_1_name='pg-nfv_vRouter'
-export VNF_1_image='vRouter'
-export VNF_1_file='./VYOS-NFV_demo.qcow2'
-export VNF_1_location='https://www.dropbox.com/s/zuz0y7jse4t7iec/VYOS-NFV_demo.qcow2?dl=0'
-export VNF_1_ip_1=172.16.1.254
-export VNF_1_ip_2=172.16.2.2
-
-#WebServer appliance
-export VNF_2_name='pg-nfv_webServer'
-export VNF_2_image='webServer'
-export VNF_2_file='./webServer-NFV_demo.qcow2'
-export VNF_2_location='https://www.dropbox.com/s/0dp7gyvmd0awmlb/webServer-NFV_demo.qcow2?dl=0'
-export VNF_2_ip_1=172.16.1.100
-export VNF_2_ip_2=172.16.2.100
-
 export member_role_name='_member_'
+export VNF_1_port_1_id=66ab5193-ab50-4da2-b4d2-b8d5a494b86d
+export VNF_1_port_2_id=8ad0e6f0-0fad-4b42-8fb3-6e4d056b740b
+export VNF_2_port_1_id=539974c3-78ac-4ac1-a6c0-304a002934b5
+export VNF_2_port_2_id=754927e9-6232-4697-834b-6198dca9e40b
+export default_secgroup_id=de255215-d712-4ee1-807f-5589ddd05529
+export VNF_1_port_1_id=c5cbbab2-981e-45bd-ac49-3d035df55acd
+export VNF_1_port_2_id=bf47f585-c392-4df4-91e2-33039fa55b8d
+export VNF_2_port_1_id=97562bf0-156b-4d27-bad2-db5a0b65fa30
+export VNF_2_port_2_id=131cabbb-715c-4e04-aebc-5522e897b661
+export default_secgroup_id=56535ecf-527d-4f51-b22f-e4d41cecddae
+export VNF_1_port_1_id=3b9c6611-62ec-4f9e-821c-cfbb0c74501a
+export VNF_1_port_2_id=d0129436-a8de-4627-a798-8e62848eccae
+export VNF_2_port_1_id=0ce37d2e-9d90-4f73-ba15-2d69b2dc39de
+export VNF_2_port_2_id=94307640-9311-4e5f-a470-9681f405df79
+export default_secgroup_id=fe717c58-3d69-422f-a1b5-f140b97bbb80
