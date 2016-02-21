@@ -9,6 +9,15 @@
 export ENVIRONMENT_PATH="./nfvrc"
 . $ENVIRONMENT_PATH
 
+#Check Keystone authentication and existing ADMIN user
+if [ "$ADMIN_NAME" = $(keystone tenant-list|grep $ADMIN_NAME|awk -F '|' '{print $3}'| tr -d ' ') ]
+then
+	echo "Keystone connection and credentials OK."
+else
+	echo "Keystone connection incorrect. Please check address and credentials  in "$ENVIRONMENT_PATH" file and try again. Exiting."
+	exit 0
+fi
+
 #Check for VNF images existing in Glance, create otherwise
 if [ "$VNF_1_image" = $(glance image-list|grep $VNF_1_image|awk -F '|' '{print $3}'| tr -d ' ') ]
 then
@@ -37,12 +46,12 @@ echo "Creating WAN network..."
 #Check whether we're on a flat or vlan network and create accordingly
 if [ "$WAN_net_type" = "vlan" ]
 then
-	neutron net-create --router:external=True --provider:physical_network=$WAN_net_physical_port \
+	neutron net-create --router:external --provider:physical_network=$WAN_net_physical_port \
 		--provider:network_type="vlan" --provider:segmentation_id=$WAN_net_vlan_id \
 		$WAN_net_name
 	echo "WAN net created as VLAN "$WAN_net_vlan_id" on port "$WAN_net_physical_port
 else
-        neutron net-create --router:external=True --provider:physical_network=$WAN_net_physical_port \
+        neutron net-create --router:external --provider:physical_network=$WAN_net_physical_port \
                 --provider:network_type="flat" \
                 $WAN_net_name
         echo "WAN net created as flat on port "$WAN_net_physical_port
@@ -116,36 +125,65 @@ neutron subnet-create --tenant-id $NFV_tenant_id --name $METRO_subnet_name --gat
 sleep 1
 
 
-#Authenticate as the NFV tenant to create VNFs in that project
-export OS_TENANT_NAME=$NFV_tenant_name
-export OS_USERNAME=$NFV_tenant_name
-export OS_PASSWORD=$NFV_tenant_name
-
-#Create vRouter VNF - can be created by creating ports then adding to VNF, or by adding VNF directly to subnets
+#Create VNFs - can be created by creating ports then adding to VNF, or by adding VNF directly to subnets
 #This uses the "port" method, but the "subnet" method is left below for reference
-echo "Creating VNF #1 ..."
 
+echo "Creating VNF #1 ports..."
 #Port Method to create VNF and pin it to a specific net and IP address. 
 #Create ports on subnets with specific IP, then create Instance with those ports.
 #Create port #1 for VNF #1 and get its id
 export VNF_1_port_1_id=$(neutron port-create $NFV_net_out_name \
+ --tenant-id $NFV_tenant_id \
  --fixed-ip subnet-id=$NFV_subnet_out_name,ip_address=$VNF_1_ip_1 \
  |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
 #Add this port to the environment variables for use at "destroy" time
 echo  "export VNF_1_port_1_id=$VNF_1_port_1_id" >> $ENVIRONMENT_PATH
 #Create port #2 for VNF #1 and get its id
 export VNF_1_port_2_id=$(neutron port-create $NFV_net_in_name \
+ --tenant-id $NFV_tenant_id \
  --fixed-ip subnet-id=$NFV_subnet_in_name,ip_address=$VNF_1_ip_2 \
  |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
 #Add this port to the environment variables for use at "destroy" time
 echo  "export VNF_1_port_2_id=$VNF_1_port_2_id" >> $ENVIRONMENT_PATH
-#Create the VNF using the port IDs
+
+echo "Creating VNF #2 ports..."
+#Create port #1 for VNF #2 and get its id
+export VNF_2_port_1_id=$(neutron port-create $NFV_net_out_name \
+ --tenant-id $NFV_tenant_id \
+ --fixed-ip subnet-id=$NFV_subnet_out_name,ip_address=$VNF_2_ip_1 \
+ |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
+#Add this port to the environment variables for use at "destroy" time
+echo  "export VNF_2_port_1_id=$VNF_2_port_1_id" >> $ENVIRONMENT_PATH
+#Create port #2 for VNF #2 and get its id
+export VNF_2_port_2_id=$(neutron port-create $NFV_net_in_name \
+ --tenant-id $NFV_tenant_id \
+ --fixed-ip subnet-id=$NFV_subnet_in_name,ip_address=$VNF_2_ip_2 \
+ |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
+#Add this port to the environment variables for use at "destroy" time
+echo  "export VNF_2_port_2_id=$VNF_2_port_2_id" >> $ENVIRONMENT_PATH
+
+#Authenticate as the NFV tenant to create VNFs in that project
+export OS_TENANT_NAME=$NFV_tenant_name
+export OS_PROJECT_NAME=$NFV_tenant_name
+export OS_USERNAME=$NFV_tenant_name
+export OS_PASSWORD=$NFV_tenant_name
+
+#Create the VNF #1 using the port IDs
+echo "Creating VNF #1 ..."
 nova boot --flavor $VNF_flavor --image $VNF_1_image \
      --nic port-id=$VNF_1_port_1_id \
      --nic port-id=$VNF_1_port_2_id \
      $VNF_1_name
 sleep 3
 
+#CREATE VNF #2
+echo "Creating VNF #2 ..."
+#Create the VNF using the port IDs
+nova boot --flavor $VNF_flavor --image $VNF_2_image \
+     --nic port-id=$VNF_2_port_1_id \
+     --nic port-id=$VNF_2_port_2_id \
+     $VNF_2_name
+sleep 3
 
 #*Same procedure but ising net-ids. Only left here for reference.
 #*Get net-out id 
@@ -157,28 +195,6 @@ sleep 3
 #* --nic net-id=$net_out_id,v4-fixed-ip=$VNF_1_ip_1 \
 #* --nic net-id=$net_in_id,v4-fixed-ip=$VNF_1_ip_2 \
 #* $VNF_1_name
-
-
-#CREATE WebServer VNF
-echo "Creating VNF #2 ..."
-#Create port #1 for VNF #2 and get its id
-export VNF_2_port_1_id=$(neutron port-create $NFV_net_out_name \
- --fixed-ip subnet-id=$NFV_subnet_out_name,ip_address=$VNF_2_ip_1 \
- |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
-#Add this port to the environment variables for use at "destroy" time
-echo  "export VNF_2_port_1_id=$VNF_2_port_1_id" >> $ENVIRONMENT_PATH
-#Create port #2 for VNF #2 and get its id
-export VNF_2_port_2_id=$(neutron port-create $NFV_net_in_name \
- --fixed-ip subnet-id=$NFV_subnet_in_name,ip_address=$VNF_2_ip_2 \
- |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
-#Add this port to the environment variables for use at "destroy" time
-echo  "export VNF_2_port_2_id=$VNF_2_port_2_id" >> $ENVIRONMENT_PATH
-#Create the VNF using the port IDs
-nova boot --flavor $VNF_flavor --image $VNF_2_image \
-     --nic port-id=$VNF_2_port_1_id \
-     --nic port-id=$VNF_2_port_2_id \
-     $VNF_2_name
-sleep 3
 
 #Create router-in
 echo "Creating inside router..."

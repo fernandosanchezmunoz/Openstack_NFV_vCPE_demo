@@ -9,6 +9,15 @@
 export ENVIRONMENT_PATH="./nfvrc"
 . $ENVIRONMENT_PATH
 
+#Check Keystone authentication and existing ADMIN user
+if [ "$ADMIN_NAME" = $(keystone tenant-list|grep $ADMIN_NAME|awk -F '|' '{print $3}'| tr -d ' ') ]
+then
+	echo "Keystone connection and credentials OK."
+else
+	echo "Keystone connection incorrect. Please check address and credentials  in "$ENVIRONMENT_PATH" file and try again. Exiting."
+	exit 0
+fi
+
 #Clear default route from router-in
 neutron router-update $rtr_in_name --routes action=clear
 sleep 1
@@ -22,7 +31,8 @@ neutron router-delete $rtr_in_name
 sleep 1
 
 #Authenticate as the NFV tenant to handle VNFs
-export OS_TENANT_NAME=$NFV_tenant_name 
+export OS_TENANT_NAME=$NFV_tenant_name
+export OS_PROJECT_NAME=$NFV_tenant_name 
 export OS_USERNAME=$NFV_tenant_name 
 export OS_PASSWORD=$NFV_tenant_name 
 

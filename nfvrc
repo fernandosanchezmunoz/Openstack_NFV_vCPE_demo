@@ -13,7 +13,7 @@
 
 export ADMIN_NAME='admin'
 export ADMIN_PASSWORD='changeme' 		#Orangebox=???
-export CONTROLLER_IP=20.0.0.2 			#Orangebox=???
+export KEYSTONE_IP=20.0.0.2 			#Orangebox=???
 export PHYSICAL_PORT='stove+enp1s0f2'		#Orangebox='node00vm1ob44+eth1'
 export EXTERNAL_NET_TYPE='flat'			#could be flat
 export EXTERNAL_NET_VLAN_ID=0			#VLAN_ID
@@ -65,7 +65,7 @@ export OS_TENANT_NAME=$ADMIN_NAME
 export OS_PROJECT_NAME=$ADMIN_NAME
 export OS_USERNAME=$ADMIN_NAME
 export OS_PASSWORD=$ADMIN_PASSWORD
-export OS_AUTH_URL='http://'$CONTROLLER_IP':5000/v2.0/'
+export OS_AUTH_URL='http://'$KEYSTONE_IP':5000/v2.0/'
 export OS_AUTH_STRATEGY='keystone'
 export OS_REGION_NAME=$REGION_NAME
 export CINDER_ENDPOINT_TYPE=$ENDPOINT_TYPE
@@ -111,3 +111,23 @@ export rtr_in_ip_nfv=172.16.2.254
 export rtr_in_ip_metro=$METRO_subnet_254_gw
 
 export member_role_name='_member_'
+export VNF_1_port_1_id=dd934aa8-dda4-474a-a315-bdf39170cbda
+export VNF_1_port_2_id=5588b454-860e-4d00-8a5a-fca0c6f6419d
+export VNF_2_port_1_id=73717dfe-cfa3-488d-ac2f-3137fcde1607
+export VNF_2_port_2_id=a272e72d-2177-4b64-a9b6-f5f9aeb7325f
+export default_secgroup_id=af49e300-8924-4146-8e6b-47e4ca74fd18
+export VNF_1_port_1_id=6954cd3d-51fa-4035-9ea7-eb6536e8bf5a
+export VNF_1_port_2_id=2d3f6b65-e6a5-4afc-ac30-3d8906477313
+export VNF_2_port_1_id=b423b578-0500-4a1c-8a36-cdc5e59265b4
+export VNF_2_port_2_id=e9b38979-f5c0-4f2e-bc50-f8493d271895
+export default_secgroup_id=801ec0ac-1729-4da5-8406-fa680a535979
+export VNF_1_port_1_id=ca47c316-82af-45d0-87f6-17eeaad5aa70
+export VNF_1_port_2_id=df897785-1339-4b38-89e3-18c8b2aac385
+export VNF_2_port_1_id=445c4b7c-efc8-4438-94df-72067c9b1b3d
+export VNF_2_port_2_id=2c99cd22-1756-498d-b231-f9e0c3dc80fb
+export default_secgroup_id=4e192e2b-a0e7-4fee-8039-6d0898aa7d86
+export VNF_1_port_1_id=721efc2f-e29b-4d4e-ae73-ed7f3c945e60
+export VNF_1_port_2_id=8f6793f7-dba2-4def-aabe-14225e0bf3c3
+export VNF_2_port_1_id=54440030-8505-4cb2-9ac8-b97f6c2bbc6e
+export VNF_2_port_2_id=04f4401b-3972-49c7-8a94-9434a79425f0
+export default_secgroup_id=fff65cc1-eef5-469a-9788-1513ffb9671f
