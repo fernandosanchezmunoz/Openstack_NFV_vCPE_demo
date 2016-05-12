@@ -185,17 +185,6 @@ nova boot --flavor $VNF_flavor --image $VNF_2_image \
      $VNF_2_name
 sleep 3
 
-#*Same procedure but ising net-ids. Only left here for reference.
-#*Get net-out id 
-#*export net_out_id=$(neutron net-show $NFV_net_out_name |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
-#*Get net-in id 
-#*export net_in_id=$(neutron net-show $NFV_net_in_name |grep " id "|awk -F '|' '{print $3}'| tr -d ' ')
-#*Create the VNF using the net IDs 
-#*nova boot --flavor $VNF_flavor --image $VNF_1_image \
-#* --nic net-id=$net_out_id,v4-fixed-ip=$VNF_1_ip_1 \
-#* --nic net-id=$net_in_id,v4-fixed-ip=$VNF_1_ip_2 \
-#* $VNF_1_name
-
 #Create router-in
 echo "Creating inside router..."
 neutron router-create --tenant-id $NFV_tenant_id $rtr_in_name
